@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:doctor/controllers/DatabaseController.dart';
+import 'package:doctor/designcolor/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -24,47 +25,162 @@ class UpdateUserInfo extends StatefulWidget {
 }
 
 class _UpdateUserInfoState extends State<UpdateUserInfo> {
-  Future<Record> getAuthUser() async {
-    String url2 = "http://192.168.43.204:8000/api/user";
-
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var key = sharedPreferences.getString("token");
-    http.Response response = await http.get(url2, headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $key'
-    });
-    if (response.statusCode == 200) {
-      final jsonRecord = jsonDecode(response.body);
-      return Record.responseJson(jsonRecord);
-    } else {
-      throw Exception();
-    }
-  }
+  Get getter = new Get();
+  TextEditingController emailControl = TextEditingController();
+  TextEditingController nameControl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Profile",
-          style: TextStyle(color: Colors.white),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        elevation: 1,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.deepOrangeAccent,
+          ),
+          onPressed: () {},
         ),
       ),
-      body: Center(
+      body: Container(
         child: FutureBuilder<Record>(
-            future: getAuthUser(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text(
-                    "Name : ${snapshot.data.name} \n Email : ${snapshot.data.email}");
-              }
-              if (snapshot.hasError) {
-                return Text(snapshot.error.toString());
-              }
-              return CircularProgressIndicator(
-                backgroundColor: Colors.blueGrey,
+          future: getter.getAuthUser(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Container(
+                padding: EdgeInsets.only(left: 16, top: 25, right: 16),
+                child: GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                  },
+                  child: ListView(
+                    children: [
+                      Text(
+                        "Edit Profile",
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Center(
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: 130,
+                              height: 130,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                    width: 4,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor),
+                                boxShadow: [
+                                  BoxShadow(
+                                      spreadRadius: 2,
+                                      blurRadius: 10,
+                                      color: Colors.blueAccent.withOpacity(0.1),
+                                      offset: Offset(0, 10)),
+                                ],
+                                shape: BoxShape.circle,
+                                // image: DecorationImage(
+                                //   image:NetworkImage(url)
+                                //   )
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    width: 4,
+                                    color: Theme.of(context)
+                                        .scaffoldBackgroundColor,
+                                  ),
+                                  color: Colors.lightBlueAccent,
+                                ),
+                                child: Icon(
+                                  Icons.edit,
+                                  color: Colors.deepOrangeAccent,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 35,
+                      ),
+                      buildTextField(
+                          "Full Name", "${snapshot.data.name}", nameControl),
+                      buildTextField(
+                          "Email", "${snapshot.data.email}", emailControl),
+                      SizedBox(
+                        height: 220,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          RoundedButton(
+                            text: "Update information",
+                            press: () {
+                              getter.upDate(
+                                  nameControl.text, emailControl.text);
+                            },
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
               );
-            }),
+            }
+            if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            }
+            return CircularProgressIndicator(
+              backgroundColor: Colors.blueAccent,
+            );
+          },
+        ),
+      ),
+      // child: FutureBuilder<Record>(
+      //     future: getto.getAuthUser(),
+      //     builder: (context, snapshot) {
+      //       if (snapshot.hasData) {
+      //         return Text(
+      //             "Name : ${snapshot.data.name} \n Email : ${snapshot.data.email}");
+      //       }
+      //       if (snapshot.hasError) {
+      //         return Text(snapshot.error.toString());
+      //       }
+      //       return CircularProgressIndicator(
+      //         backgroundColor: Colors.blueGrey,
+      //       );
+      //     }),
+    );
+  }
+
+  Widget buildTextField(String labelText, String placeholder, controlMode) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 35.0),
+      child: TextField(
+        controller: controlMode,
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.only(bottom: 3),
+          labelText: labelText,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: placeholder,
+          hintStyle: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
       ),
     );
   }

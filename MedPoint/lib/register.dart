@@ -1,12 +1,10 @@
-import 'dart:convert';
-
-import 'package:doctor/wheretheyland.dart';
+import 'package:doctor/loginpage.dart';
 import 'package:flutter/material.dart';
 import 'package:doctor/designcolor/constant.dart';
 import 'package:doctor/designcolor/rounded_button.dart';
 import 'package:doctor/designcolor/text.dart';
 import 'package:doctor/designcolor/reglog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:http/http.dart' as http;
 
 class RegisterScreen extends StatelessWidget {
@@ -34,32 +32,34 @@ class _BodyState extends State<Body> {
 
   bool _isLoading = false;
 
-  create(String name, String email, password) async {
-    String url = "http://192.168.43.204:8000/api/register";
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    Map body = {"name": name, "email": email, "password": password};
-    var jsonResponse = null;
-    var res = await http.post(url, body: body);
-    if (res.statusCode == 200) {
-      jsonResponse = json.decode(res.body);
-
-      print("Response status: ${res.statusCode}");
-      print("Response status: ${res.body}");
-      if (jsonResponse != null) {
-        setState(() {
-          _isLoading = false;
-        });
-        //check for this later
-        sharedPreferences.setString("token", jsonResponse['token']);
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (BuildContext context) => LandHere()),
-            (route) => false);
-      }
-    } else {
+  dataCreateUser(String name, String email, String password) async {
+    String myUrl = "http://192.168.43.204:8000/api/register";
+    final response = await http.post(myUrl,
+        headers: {'Accept': 'application/json'},
+        body: {"name": "$name", "email": "$email", "password": "$password"});
+    print("Response status: ${response.statusCode}");
+    print("Response status: ${response.body}");
+    if (response.statusCode == 200) {
       setState(() {
         _isLoading = false;
       });
-      print("Response status: ${res.body}");
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Success"),
+              content: Text("Successfully created account!."),
+              actions: <Widget>[
+                RaisedButton(
+                  color: kPrimaryColor,
+                  child: Text("Close"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          });
     }
   }
 
@@ -94,13 +94,13 @@ class _BodyState extends State<Body> {
                             border: InputBorder.none,
                           ),
                         ),
-                        TextField(
-                          cursorColor: kPrimaryColor,
-                          decoration: InputDecoration(
-                              icon: Icon(Icons.calendar_today),
-                              hintText: "Date of birth",
-                              border: InputBorder.none),
-                        ),
+                        // TextField(
+                        //   cursorColor: kPrimaryColor,
+                        //   decoration: InputDecoration(
+                        //       icon: Icon(Icons.calendar_today),
+                        //       hintText: "Date of birth",
+                        //       border: InputBorder.none),
+                        // ),
                         TextField(
                           keyboardType: TextInputType.emailAddress,
                           controller: emailRegister,
@@ -133,9 +133,24 @@ class _BodyState extends State<Body> {
                       setState(() {
                         _isLoading = true;
                       });
-                      create(nameRegister.text, emailRegister.text,
+
+                      dataCreateUser(nameRegister.text, emailRegister.text,
                           passwordRegister.text);
                     },
+                  ),
+                  FlatButton(
+                    onPressed: () {
+                      print("na click padulong login");
+                      setState(() {
+                        _isLoading = true;
+                      });
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                      );
+                    },
+                    child: Text('Click to login'),
                   ),
                 ],
               ),
