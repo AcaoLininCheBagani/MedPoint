@@ -1,6 +1,9 @@
+import 'package:doctor/appointment.dart';
 import 'package:doctor/controllers/DatabaseController.dart';
+import 'package:doctor/designcolor/text.dart';
 import 'package:doctor/loginpage.dart';
 import 'package:doctor/profile.dart';
+import 'package:doctor/wheretheylandcategorycard.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,7 +11,7 @@ class LandHere extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Diri mag landing",
+      title: "Home",
       debugShowCheckedModeBanner: false,
       home: LandPage(),
       theme: ThemeData(accentColor: Colors.white70),
@@ -46,7 +49,86 @@ class _LandPageState extends State<LandPage> {
       appBar: AppBar(
         title: Text("MedPoint", style: TextStyle(color: Colors.white)),
       ),
-      body: Center(),
+      body: SafeArea(
+        bottom: false,
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: 50,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: Text(
+                    "Search for the best \nDoctor",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 40),
+                  child: TextFieldContainer(
+                    child: Column(
+                      children: <Widget>[
+                        TextField(
+                          decoration: InputDecoration(
+                            icon: Icon(Icons.search),
+                            hintText: "Search the best doctor",
+                            border: InputBorder.none,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  child: Text(
+                    "Categories",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                categoryCard(),
+                SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  child: Text(
+                    "Doctors",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       drawer: Drawer(
         child: FutureBuilder<Record>(
             future: getter.getAuthUser(),
@@ -77,11 +159,28 @@ class _LandPageState extends State<LandPage> {
                       ListTile(
                           title: new Text("Make appointment"),
                           trailing: new Icon(Icons.settings),
-                          onTap: () {}),
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    MakeAppointment()));
+                          }),
                       ListTile(
                           title: new Text("View appointment"),
                           trailing: new Icon(Icons.settings),
                           onTap: () {}),
+                      SizedBox(height: 80),
+                      ListTile(
+                          title: new Text("DELETE ACCOUNT"),
+                          trailing: new Icon(Icons.delete),
+                          onTap: () {
+                            getter.deleteaccount();
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        LoginScreen()),
+                                (route) => false);
+                          }),
+                      SizedBox(height: 80),
                       FlatButton.icon(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         onPressed: () {
@@ -109,4 +208,19 @@ class _LandPageState extends State<LandPage> {
       ),
     );
   }
+}
+
+categoryCard() {
+  return SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    child: Row(
+      children: <Widget>[
+        WhereTheyLandCategoryCard(),
+        WhereTheyLandCategoryCard(),
+        WhereTheyLandCategoryCard(),
+        WhereTheyLandCategoryCard(),
+        WhereTheyLandCategoryCard(),
+      ],
+    ),
+  );
 }

@@ -63,6 +63,12 @@ class _BodyState extends State<Body> {
     }
   }
 
+  clearText() {
+    nameRegister.clear();
+    emailRegister.clear();
+    passwordRegister.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -136,6 +142,7 @@ class _BodyState extends State<Body> {
 
                       dataCreateUser(nameRegister.text, emailRegister.text,
                           passwordRegister.text);
+                      clearText();
                     },
                   ),
                   FlatButton(

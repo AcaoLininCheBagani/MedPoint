@@ -1,10 +1,7 @@
-import 'dart:convert';
-
 import 'package:doctor/controllers/DatabaseController.dart';
 import 'package:doctor/designcolor/rounded_button.dart';
+import 'package:doctor/wheretheyland.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 class UpdateUser extends StatelessWidget {
   @override
@@ -40,7 +37,10 @@ class _UpdateUserInfoState extends State<UpdateUserInfo> {
             Icons.arrow_back,
             color: Colors.deepOrangeAccent,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LandHere()));
+          },
         ),
       ),
       body: Container(
@@ -128,6 +128,7 @@ class _UpdateUserInfoState extends State<UpdateUserInfo> {
                           RoundedButton(
                             text: "Update information",
                             press: () {
+                              getter.showSampleDialog(context);
                               getter.upDate(
                                   nameControl.text, emailControl.text);
                             },
@@ -148,20 +149,6 @@ class _UpdateUserInfoState extends State<UpdateUserInfo> {
           },
         ),
       ),
-      // child: FutureBuilder<Record>(
-      //     future: getto.getAuthUser(),
-      //     builder: (context, snapshot) {
-      //       if (snapshot.hasData) {
-      //         return Text(
-      //             "Name : ${snapshot.data.name} \n Email : ${snapshot.data.email}");
-      //       }
-      //       if (snapshot.hasError) {
-      //         return Text(snapshot.error.toString());
-      //       }
-      //       return CircularProgressIndicator(
-      //         backgroundColor: Colors.blueGrey,
-      //       );
-      //     }),
     );
   }
 

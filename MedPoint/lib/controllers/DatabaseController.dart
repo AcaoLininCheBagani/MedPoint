@@ -1,5 +1,9 @@
+library databasecontroller.dart;
+
 import 'dart:convert';
 
+import 'package:doctor/designcolor/constant.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,6 +25,8 @@ class Record {
 
 class Get {
   SharedPreferences sharedPreferences;
+
+  //getting current user login, information
   Future<Record> getAuthUser() async {
     sharedPreferences = await SharedPreferences.getInstance();
     var key = sharedPreferences.getString("token");
@@ -62,6 +68,20 @@ class Get {
     }
   }
 
+  //delete
+  deleteaccount() async {
+    int id = sharedPreferences.getInt("id");
+    print("id: $id");
+    String url = "http://192.168.43.204:8000/api/delete/$id";
+    final key = sharedPreferences.getString("token");
+    http.Response response = await http.delete(url, headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $key'
+    });
+    print('Response status : ${response.statusCode}');
+    print('Response body : ${response.body}');
+  }
+
 //update
   upDate(String name, String email) async {
     int id = sharedPreferences.getInt("id");
@@ -77,5 +97,32 @@ class Get {
     });
     print('Response status : ${response.statusCode}');
     print('Response body : ${response.body}');
+    final js = jsonDecode(response.body);
+    sharedPreferences.setString("status", js['status']);
+    sharedPreferences.setString("message", js['message']);
+  }
+
+  //show dialog
+  void showSampleDialog(BuildContext context) async {
+    final k = sharedPreferences.getString("status");
+    final v = sharedPreferences.getString("message");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("$k"),
+          content: Text("$v"),
+          actions: <Widget>[
+            RaisedButton(
+              color: kPrimaryColor,
+              child: Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
