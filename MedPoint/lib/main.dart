@@ -25,6 +25,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<SliderModel> mySLides = new List<SliderModel>();
+
   int slideIndex = 0;
   PageController controller;
 

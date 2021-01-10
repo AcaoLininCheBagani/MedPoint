@@ -1,5 +1,6 @@
 import 'package:doctor/appointment.dart';
 import 'package:doctor/controllers/DatabaseController.dart';
+import 'package:doctor/designcolor/constant.dart';
 import 'package:doctor/designcolor/text.dart';
 import 'package:doctor/loginpage.dart';
 import 'package:doctor/profile.dart';
@@ -173,23 +174,60 @@ class _LandPageState extends State<LandPage> {
                           title: new Text("DELETE ACCOUNT"),
                           trailing: new Icon(Icons.delete),
                           onTap: () {
-                            getter.deleteaccount();
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        LoginScreen()),
-                                (route) => false);
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text("WARNING"),
+                                    content: Text(
+                                        "Do you want to delete account?!."),
+                                    actions: <Widget>[
+                                      RaisedButton(
+                                        color: kPrimaryColor,
+                                        child: Text("Yes"),
+                                        onPressed: () {
+                                          getter.deleteaccount();
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                                  MaterialPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          LoginScreen()),
+                                                  (route) => false);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
                           }),
                       SizedBox(height: 80),
                       FlatButton.icon(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         onPressed: () {
-                          getter.logOutUser();
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      LoginScreen()),
-                              (route) => false);
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Logout"),
+                                  content: Text("Are you sure?!."),
+                                  actions: <Widget>[
+                                    RaisedButton(
+                                      color: kPrimaryColor,
+                                      child: Text("Ok"),
+                                      onPressed: () {
+                                        getter.logOutUser();
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        LoginScreen()),
+                                                (route) => false);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
                         },
                         icon: Icon(Icons.lock_open),
                         label: Text("Logout"),

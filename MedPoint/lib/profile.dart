@@ -128,9 +128,9 @@ class _UpdateUserInfoState extends State<UpdateUserInfo> {
                           RoundedButton(
                             text: "Update information",
                             press: () {
-                              getter.showSampleDialog(context);
                               getter.upDate(
                                   nameControl.text, emailControl.text);
+                              getter.showSampleDialog(context);
                             },
                           )
                         ],

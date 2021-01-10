@@ -91,8 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ))
           : SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
+                children: [
                   SizedBox(height: size.height * 0.03),
                   Image.asset(
                     "assets/med.png",
